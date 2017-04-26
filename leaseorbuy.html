@@ -1,0 +1,250 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+<style>
+body {
+  margin:0;
+  padding:20px;
+}
+.quiz {
+  padding:0 30px 20px 30px;
+  max-width:960px;
+  margin:0 auto;
+  font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+  
+ ul {
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+}
+
+.quiz-question {
+  font-weight:bold;
+  display:block;
+  padding:30px 0 10px 0;
+  margin:0;
+  font: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", "serif";
+}
+.quiz-answer {
+  margin:0;
+  padding:10px;
+  background:#f7f7f7;
+  margin-bottom:5px;
+  cursor: pointer;
+  font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+  
+  &:hover {
+    background:#eee;
+  }
+  
+  &:before {
+    content:"";
+    display:inline-block;
+    width:15px;
+    height:15px;
+    border:1px solid #ccc;
+    background:#fff;
+    vertical-align:middle;
+    margin-right:10px;
+  }
+  
+  &.active {
+    &:before {
+      background-color:#333;
+      border-color:#333;
+    }
+  }
+  &.correct {
+    &:before {
+      background-color:green;
+      border-color:green;
+    }
+  }
+  &.incorrect {
+    &:before {
+      background-color:green;
+      border-color:green;
+    }
+  }
+  &.active.correct {
+    &:before {
+      outline: 2px solid green;
+      outline-offset: 2px;
+    }
+  }
+}
+.quiz-result {
+  max-width:960px;
+  margin:0 auto;
+  font-weight:bold;
+  text-align:center;
+  color: #fff;
+  padding:20px;
+  
+  &.good {
+    background: green;
+  }
+  &.mid {
+    background: blue;
+  }
+  &.bad {
+    background: green;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="quiz">
+  
+  <h2 class="quiz-question">How often do you get a new car?</h2>
+  <ul data-quiz-question="1">
+    <li class="quiz-answer" data-quiz-answer="a">I like having a new car every 2 to 3 years.</li>
+    <li class="quiz-answer" data-quiz-answer="b">I typically drive my car for 7 to 10 years.</li>
+  </ul>
+  
+  <h2 class="quiz-question">How do you feel about car customization?</h2>
+  <ul data-quiz-question="2">
+    <li class="quiz-answer" data-quiz-answer="b">I like to modify or customize my car's appearance.</li>
+    <li class="quiz-answer" data-quiz-answer="a">I tend to keep my car as delivered.</li>
+  </ul>
+  
+  <h2 class="quiz-question">Would you like to drive a more expensive car?</h2>
+  <ul data-quiz-question="3">
+    <li class="quiz-answer" data-quiz-answer="b">Driving an expensive car is not terribly important to me.</li>
+    <li class="quiz-answer" data-quiz-answer="a">I want to drive an expensive car with lower monthly payments.</li>
+  </ul>
+  
+  <h2 class="quiz-question">How many miles do you typically drive in a year?</h2>
+  <ul data-quiz-question="4">
+    <li class="quiz-answer" data-quiz-answer="a">I drive fewer than 20,000 miles per year.</li>
+    <li class="quiz-answer" data-quiz-answer="b">I drive more than 20,000 miles per year.</li>
+  </ul>
+  
+  <h2 class="quiz-question">Do you care about having your car under warranty?</h2>
+  <ul data-quiz-question="5">
+    <li class="quiz-answer" data-quiz-answer="a">I like having my car under warranty.</li>
+    <li class="quiz-answer" data-quiz-answer="b">I do not mind if my car is not under warranty for a period of time.</li>
+  </ul>
+  
+  <h2 class="quiz-question">Do you trade in your car after you've paid it off?</h2>
+  <ul data-quiz-question="6">
+    <li class="quiz-answer" data-quiz-answer="b">I usually keep my cars after they are paid for.</li>
+    <li class="quiz-answer" data-quiz-answer="a">I usually sell or trade in my cars every few years.</li>
+  </ul>
+  
+  <h2 class="quiz-question">What describes you best?</h2>
+  <ul data-quiz-question="7">
+    <li class="quiz-answer" data-quiz-answer="b">I take pride in owning my own vehicle.</li>
+    <li class="quiz-answer" data-quiz-answer="a">I am not opposed to leasing.</li>
+  </ul>
+  
+</div>
+
+<div class="quiz-result"></div>
+
+<script>
+var Quiz = function() {
+  var self = this;
+  this.init = function() {
+    self._bindEvents();
+  };
+
+  this.correctAnswers = [
+    { question: 1, answer: "a" },
+    { question: 2, answer: "a" },
+    { question: 3, answer: "a" },
+    { question: 4, answer: "a" },
+    { question: 5, answer: "a" },
+    { question: 6, answer: "a" },
+    { question: 7, answer: "a" }
+  ];
+
+  this._pickAnswer = function($answer, $answers) {
+    $answers.find(".quiz-answer").removeClass("active");
+    $answer.addClass("active");
+  };
+  this._calcResult = function() {
+    var numberOfCorrectAnswers = 0;
+    $("ul[data-quiz-question]").each(function(i) {
+      var $this = $(this),
+        chosenAnswer = $this.find(".quiz-answer.active").data("quiz-answer"),
+        correctAnswer;
+
+      for (var j = 0; j < self.correctAnswers.length; j++) {
+        var a = self.correctAnswers[j];
+        if (a.question == $this.data("quiz-question")) {
+          correctAnswer = a.answer;
+        }
+      }
+
+      if (chosenAnswer == correctAnswer) {
+        numberOfCorrectAnswers++;
+
+        // highlight this as correct answer
+        $this.find(".quiz-answer.active").addClass("correct");
+      } else {
+        $this
+          .find('.quiz-answer[data-quiz-answer="' + correctAnswer + '"]')
+          .addClass("correct");
+        $this.find(".quiz-answer.active").addClass("incorrect");
+      }
+    });
+    if (numberOfCorrectAnswers < 4) {
+      return {
+        code: "bad",
+        text: "Based on your answers, buying is the best option for you!"
+      };
+    } else if (numberOfCorrectAnswers == 3 || numberOfCorrectAnswers == 3) {
+      return {
+        code: "mid",
+        text: "Based on your answers, you feel about equally as strong about leasing as you do about buying. Follow your heart!"
+      };
+    } else if (numberOfCorrectAnswers > 4) {
+      return {
+        code: "good",
+        text: "Based on your answers, leasing is the best option for you!"
+      };
+    }
+  };
+  this._isComplete = function() {
+    var answersComplete = 0;
+    $("ul[data-quiz-question]").each(function() {
+      if ($(this).find(".quiz-answer.active").length) {
+        answersComplete++;
+      }
+    });
+    if (answersComplete >= 7) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  this._showResult = function(result) {
+    $(".quiz-result").addClass(result.code).html(result.text);
+  };
+  this._bindEvents = function() {
+    $(".quiz-answer").on("click", function() {
+      var $this = $(this), $answers = $this.closest("ul[data-quiz-question]");
+      self._pickAnswer($this, $answers);
+      if (self._isComplete()) {
+        // scroll to answer section
+        $("html, body").animate({
+          scrollTop: $(".quiz-result").offset().top
+        });
+
+        self._showResult(self._calcResult());
+        $(".quiz-answer").off("click");
+      }
+    });
+  };
+};
+var quiz = new Quiz();
+quiz.init();
+
+</script>
+</body>
+</html>
