@@ -66,13 +66,14 @@ body {
   text-align: center;
   color: #fff;
   padding: 20px;
+  font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
 }
-.quiz-result.good {
+.quiz-result.lease {
   background: green;
 }
 .quiz-result.mid {
   background: blue;
 }
-.quiz-result.bad {
+.quiz-result.buy {
   background: green;
 }

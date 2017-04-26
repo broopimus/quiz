@@ -93,19 +93,12 @@ var Quiz = function() {
 
       if (chosenAnswer == correctAnswer) {
         numberOfCorrectAnswers++;
-
-       // highlight this as correct answer
-        $this.find(".quiz-answer.active").addClass("correct");
-      } else {
-        $this
-          .find('.quiz-answer[data-quiz-answer="' + correctAnswer + '"]')
-          .addClass("correct");
-        $this.find(".quiz-answer.active").addClass("incorrect");
+		 
       }
     });
     if (numberOfCorrectAnswers < 4) {
       return {
-        code: "bad",
+        code: "buy",
         text: "Based on your answers, buying is the best option for you!"
       };
     } else if (numberOfCorrectAnswers == 3 || numberOfCorrectAnswers == 3) {
@@ -115,11 +108,12 @@ var Quiz = function() {
       };
     } else if (numberOfCorrectAnswers > 4) {
       return {
-        code: "good",
+        code: "lease",
         text: "Based on your answers, leasing is the best option for you!"
       };
     }
   };
+	
   this._isComplete = function() {
     var answersComplete = 0;
     $("ul[data-quiz-question]").each(function() {
@@ -127,7 +121,7 @@ var Quiz = function() {
         answersComplete++;
       }
     });
-    if (answersComplete >= 7) {
+    if (answersComplete >= this.correctAnswers.length) {
       return true;
     } else {
       return false;
